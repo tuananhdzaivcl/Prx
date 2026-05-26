@@ -1,152 +1,123 @@
-# Hướng dẫn Deploy lên Vercel
+# Hướng dẫn Deploy lên Netlify
 
-## Yêu cầu trước khi deploy
-
-### 1. PostgreSQL database
-Cần 1 database PostgreSQL. Khuyến nghị dùng **Neon** (miễn phí):
-- Vào https://neon.tech → tạo tài khoản → tạo project mới
-- Copy **Connection string** (dạng `postgresql://...`)
-
-### 2. Vercel Blob (lưu ảnh upload)
-- Vào Vercel Dashboard → project → Storage → Create Database → Blob
-- Vercel tự inject `BLOB_READ_WRITE_TOKEN` vào environment
+## Yêu cầu
+- Tài khoản Netlify (miễn phí)
+- PostgreSQL database (Neon, Supabase, hoặc Railway — đều có free tier)
 
 ---
 
-## Bước 1 – Upload code lên GitHub
+## Bước 1: Tạo Database PostgreSQL
 
-```bash
-# Giải nén file zip vào 1 thư mục
-# Sau đó chạy trong thư mục đó:
+### Dùng Neon (khuyến nghị, miễn phí)
+1. Vào https://neon.tech → Tạo tài khoản → New Project
+2. Copy **Connection string** dạng:
+   ```
+   postgresql://user:password@host/dbname?sslmode=require
+   ```
 
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<repo-name>.git
-git push -u origin main
+### Tạo bảng (chạy trong SQL Editor của Neon/Supabase)
+```sql
+CREATE TABLE IF NOT EXISTS "photos" (
+  "id" serial PRIMARY KEY,
+  "filename" text NOT NULL,
+  "original_name" text NOT NULL,
+  "caption" text,
+  "uploaded_by" text,
+  "is_approved" boolean DEFAULT false NOT NULL,
+  "created_at" timestamp DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS "users" (
+  "id" serial PRIMARY KEY,
+  "username" text NOT NULL UNIQUE,
+  "password_hash" text NOT NULL,
+  "is_admin" boolean DEFAULT false NOT NULL,
+  "created_at" timestamp DEFAULT now()
+);
+
+-- Tạo tài khoản admin (mật khẩu mặc định: admin123)
+INSERT INTO "users" ("username", "password_hash", "is_admin")
+VALUES ('admin', '$2b$10$X4kv7j5ZcG39WgURi1HdHOxpWDrQJpFzknWhKaJOIdz1cFHpEwdFe', true);
 ```
 
 ---
 
-## Bước 2 – Deploy trên Vercel
+## Bước 2: Deploy lên Netlify
 
-1. Vào https://vercel.com → **Add New Project** → chọn repo GitHub
-2. Trong phần **Configure Project**:
-   - **Root Directory**: để trống (hoặc `.` nếu yêu cầu)
-   - **Framework Preset**: Other
-   - Các lệnh build đã có trong `vercel.json`, Vercel sẽ tự đọc
-3. Thêm **Environment Variables** (bắt buộc):
+### Cách A: Kéo thả (nhanh nhất)
+1. Vào https://app.netlify.com → **Add new site** → **Deploy manually**
+2. Kéo thả **toàn bộ thư mục source code** vào ô drop zone
+3. Chờ Netlify tự build (~2-3 phút)
 
-| Tên biến | Giá trị |
-|---|---|
-| `DATABASE_URL` | Connection string từ Neon hoặc PostgreSQL khác |
-| `SESSION_SECRET` | Chuỗi bất kỳ dài ≥ 32 ký tự (vd: dùng `openssl rand -hex 32`) |
+### Cách B: Từ GitHub
+1. Push code lên GitHub
+2. Netlify → **Add new site** → **Import an existing project** → chọn repo
+3. Cấu hình build (Netlify tự đọc từ `netlify.toml`, không cần nhập tay)
+
+---
+
+## Bước 3: Cấu hình Environment Variables
+
+Vào **Site settings** → **Environment variables** → Thêm 3 biến bắt buộc:
+
+| Key | Value |
+|-----|-------|
+| `DATABASE_URL` | `postgresql://user:pass@host/db?sslmode=require` |
+| `SESSION_SECRET` | Chuỗi ngẫu nhiên dài ít nhất 32 ký tự |
 | `NODE_ENV` | `production` |
 
-4. Nhấn **Deploy**
+Biến tuỳ chọn (để lưu ảnh lên cloud):
 
----
+| Key | Value |
+|-----|-------|
+| `BLOB_READ_WRITE_TOKEN` | Token từ Vercel Blob Storage |
 
-## Bước 3 – Tạo bảng database (chỉ làm 1 lần)
-
-Sau khi deploy xong, chạy SQL này trên Neon Dashboard (SQL Editor):
-
-```sql
--- Bảng members
-CREATE TABLE IF NOT EXISTS members (
-  id SERIAL PRIMARY KEY,
-  username TEXT NOT NULL UNIQUE,
-  password TEXT NOT NULL,
-  is_admin BOOLEAN NOT NULL DEFAULT false,
-  is_blocked BOOLEAN NOT NULL DEFAULT false,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
--- Bảng photos (có cột is_approved mới)
-CREATE TABLE IF NOT EXISTS photos (
-  id SERIAL PRIMARY KEY,
-  url TEXT NOT NULL,
-  caption TEXT,
-  uploader_id INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,
-  is_approved BOOLEAN NOT NULL DEFAULT false,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
--- Thêm is_approved nếu bảng photos đã tồn tại từ trước
-ALTER TABLE photos ADD COLUMN IF NOT EXISTS is_approved BOOLEAN NOT NULL DEFAULT false;
+### Tạo SESSION_SECRET:
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 ---
 
-## Bước 4 – Tạo tài khoản admin đầu tiên
+## Bước 4: Lưu trữ ảnh
 
-Chạy SQL này (thay `tenAdmin` và hash mật khẩu):
+### Lựa chọn 1: Vercel Blob (khuyến nghị)
+1. Vào https://vercel.com → Tạo tài khoản miễn phí
+2. Dashboard → **Storage** → **Create** → **Blob**
+3. Copy `BLOB_READ_WRITE_TOKEN` → thêm vào Netlify environment variables
 
-```sql
--- Ví dụ tạo admin với password = "admin123" (hash bằng bcrypt rounds=10)
--- Tốt nhất: đăng ký qua web rồi chạy lệnh này để set admin
-UPDATE members SET is_admin = true WHERE username = 'tenAdmin';
-```
+### Lựa chọn 2: Không cài Blob
+- Ảnh lưu tạm trong bộ nhớ của serverless function
+- **Sẽ bị mất khi function restart** — chỉ dùng để test
 
 ---
 
-## Lệnh build (chạy trên máy local)
+## Sau khi deploy thành công
+
+1. Truy cập URL của site (VD: `https://ten-site.netlify.app`)
+2. Vào `/admin/login` → đăng nhập: `admin` / `admin123`
+3. **Đổi mật khẩu ngay** sau khi vào được trang admin
+
+---
+
+## Lệnh build (test trên máy local)
 
 ```bash
 # Cài dependencies
-pnpm install
+pnpm install --no-frozen-lockfile
 
 # Build frontend
-pnpm --filter @workspace/lop9a2 run build
+pnpm --filter './artifacts/lop9a2' run build
 # Output: artifacts/lop9a2/dist/public/
-
-# Build API server
-pnpm --filter @workspace/api-server run build
-# Output: artifacts/api-server/dist/index.mjs
-
-# Typecheck toàn bộ
-pnpm run typecheck
 ```
 
 ---
 
 ## Xử lý lỗi thường gặp
 
-### ❌ Build lỗi: "Cannot find module '@workspace/db'"
-```bash
-pnpm install  # chạy lại để cài workspace packages
-```
-
-### ❌ Lỗi: "DATABASE_URL must be set"
-→ Kiểm tra lại Environment Variables trong Vercel Dashboard
-
-### ❌ Lỗi: "SESSION_SECRET environment variable is required"
-→ Thêm `SESSION_SECRET` vào Environment Variables
-
-### ❌ Upload ảnh không hoạt động trên Vercel
-→ Cần bật **Vercel Blob**:
-- Vercel Dashboard → Storage → Blob → Create Store
-- Vercel sẽ tự inject `BLOB_READ_WRITE_TOKEN`
-
-### ❌ Session bị mất khi reload (người dùng bị logout liên tục)
-→ Bảng sessions chưa được tạo. Chạy SQL sau:
-```sql
-CREATE TABLE IF NOT EXISTS "session" (
-  "sid" varchar NOT NULL COLLATE "default",
-  "sess" json NOT NULL,
-  "expire" timestamp(6) NOT NULL
-) WITH (OIDS=FALSE);
-
-ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
-CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");
-```
-*(Thông thường `connect-pg-simple` tự tạo bảng này, nhưng nếu không thì chạy tay)*
-
-### ❌ Deploy lại sau khi thay đổi code
-```bash
-git add .
-git commit -m "mô tả thay đổi"
-git push
-# Vercel tự động deploy lại khi có push lên main
-```
+| Lỗi | Nguyên nhân | Giải pháp |
+|-----|-------------|-----------|
+| Function timeout | Database kết nối chậm | Kiểm tra DATABASE_URL |
+| 500 khi login | SESSION_SECRET chưa set | Thêm env var |
+| Ảnh không hiển thị | Chưa cài BLOB_READ_WRITE_TOKEN | Xem Bước 4 |
+| Session mất liên tục | DATABASE_URL sai | Kiểm tra lại connection string |
