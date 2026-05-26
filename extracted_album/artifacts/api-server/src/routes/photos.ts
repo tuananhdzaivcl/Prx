@@ -2,26 +2,36 @@ import { Router } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { db, membersTable, photosTable } from "@workspace/db";
 import { DeletePhotoParams } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
 
-const uploadsDir = path.join(process.cwd(), "uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+const USE_BLOB = Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+
+const uploadsDir = path.join(
+  process.env.VERCEL ? "/tmp" : process.cwd(),
+  "uploads",
+);
+
+if (!USE_BLOB) {
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
 }
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const name = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
-    cb(null, name);
-  },
-});
+const storage = USE_BLOB
+  ? multer.memoryStorage()
+  : multer.diskStorage({
+      destination: (_req, _file, cb) => {
+        cb(null, uploadsDir);
+      },
+      filename: (_req, file, cb) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        const name = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
+        cb(null, name);
+      },
+    });
 
 const upload = multer({
   storage,
@@ -39,7 +49,6 @@ const upload = multer({
 
 const router = Router();
 
-// Public: only approved photos
 router.get("/photos", async (req, res): Promise<void> => {
   const rows = await db
     .select({
@@ -60,49 +69,67 @@ router.get("/photos", async (req, res): Promise<void> => {
     rows.map((r) => ({
       ...r,
       createdAt: r.createdAt.toISOString(),
-    }))
+    })),
   );
 });
 
-router.post("/photos", requireAuth, upload.single("file"), async (req, res): Promise<void> => {
-  const memberId = req.session.memberId!;
+router.post(
+  "/photos",
+  requireAuth,
+  upload.single("file"),
+  async (req, res): Promise<void> => {
+    const memberId = req.session.memberId!;
 
-  const [member] = await db
-    .select()
-    .from(membersTable)
-    .where(eq(membersTable.id, memberId));
+    const [member] = await db
+      .select()
+      .from(membersTable)
+      .where(eq(membersTable.id, memberId));
 
-  if (!member || member.isBlocked) {
-    res.status(403).json({ error: "Tài khoản của bạn đã bị khóa" });
-    return;
-  }
+    if (!member || member.isBlocked) {
+      res.status(403).json({ error: "Tài khoản của bạn đã bị khóa" });
+      return;
+    }
 
-  if (!req.file) {
-    res.status(400).json({ error: "Vui lòng chọn ảnh để tải lên" });
-    return;
-  }
+    if (!req.file) {
+      res.status(400).json({ error: "Vui lòng chọn ảnh để tải lên" });
+      return;
+    }
 
-  const url = `/api/uploads/${req.file.filename}`;
-  const caption = typeof req.body.caption === "string" ? req.body.caption : null;
+    let url: string;
 
-  // Admin photos are auto-approved
-  const isApproved = member.isAdmin;
+    if (USE_BLOB && req.file.buffer) {
+      const { put } = await import("@vercel/blob");
+      const ext = path.extname(req.file.originalname).toLowerCase();
+      const filename = `photos/${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
+      const blob = await put(filename, req.file.buffer, {
+        access: "public",
+        contentType: req.file.mimetype,
+      });
+      url = blob.url;
+    } else {
+      url = `/api/uploads/${(req.file as Express.Multer.File & { filename: string }).filename}`;
+    }
 
-  const [photo] = await db
-    .insert(photosTable)
-    .values({ url, caption, uploaderId: memberId, isApproved })
-    .returning();
+    const caption =
+      typeof req.body.caption === "string" ? req.body.caption : null;
+    const isApproved = member.isAdmin;
 
-  res.status(201).json({
-    id: photo.id,
-    url: photo.url,
-    caption: photo.caption,
-    uploaderId: photo.uploaderId,
-    uploaderName: member.username,
-    createdAt: photo.createdAt.toISOString(),
-    isApproved: photo.isApproved,
-  });
-});
+    const [photo] = await db
+      .insert(photosTable)
+      .values({ url, caption, uploaderId: memberId, isApproved })
+      .returning();
+
+    res.status(201).json({
+      id: photo.id,
+      url: photo.url,
+      caption: photo.caption,
+      uploaderId: photo.uploaderId,
+      uploaderName: member.username,
+      createdAt: photo.createdAt.toISOString(),
+      isApproved: photo.isApproved,
+    });
+  },
+);
 
 router.delete("/photos/:id", requireAuth, async (req, res): Promise<void> => {
   const [member] = await db
@@ -115,7 +142,9 @@ router.delete("/photos/:id", requireAuth, async (req, res): Promise<void> => {
     return;
   }
 
-  const rawId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  const rawId = Array.isArray(req.params.id)
+    ? req.params.id[0]
+    : req.params.id;
   const params = DeletePhotoParams.safeParse({ id: parseInt(rawId, 10) });
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -132,10 +161,12 @@ router.delete("/photos/:id", requireAuth, async (req, res): Promise<void> => {
     return;
   }
 
-  const filename = path.basename(photo.url);
-  const filepath = path.join(uploadsDir, filename);
-  if (fs.existsSync(filepath)) {
-    fs.unlinkSync(filepath);
+  if (!photo.url.startsWith("http")) {
+    const filename = path.basename(photo.url);
+    const filepath = path.join(uploadsDir, filename);
+    if (fs.existsSync(filepath)) {
+      fs.unlinkSync(filepath);
+    }
   }
 
   await db.delete(photosTable).where(eq(photosTable.id, params.data.id));

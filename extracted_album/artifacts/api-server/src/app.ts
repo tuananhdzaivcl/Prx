@@ -2,13 +2,17 @@ import express, { type Express } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
 import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 import path from "path";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { pool } from "@workspace/db";
 
 if (!process.env.SESSION_SECRET) {
   throw new Error("SESSION_SECRET environment variable is required");
 }
+
+const PgStore = connectPgSimple(session);
 
 const app: Express = express();
 
@@ -37,6 +41,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
+    store: new PgStore({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      pool: pool as any,
+      createTableIfMissing: true,
+    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
