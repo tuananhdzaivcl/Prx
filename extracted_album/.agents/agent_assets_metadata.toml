@@ -1,0 +1,38 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "C_cmRI0fFZJ-MNHbHA4BT"
+uri = "file://artifacts/lop9a2/public/images/memories_1.jpg"
+type = "image"
+title = "vintage school memories, old photo album, classmates, nostalgic, sepia tone"
+
+[[outputs]]
+id = "boZrAwcSLhAwqPyonX_p0"
+uri = "file://artifacts/lop9a2/public/images/memories_2.jpg"
+type = "image"
+title = "vintage school memories, old photo album, classmates, nostalgic, sepia tone"
+
+[[outputs]]
+id = "Ur6IaNbv0Tq4feZEvui1d"
+uri = "file://artifacts/lop9a2/public/images/memories_3.jpg"
+type = "image"
+title = "vintage school memories, old photo album, classmates, nostalgic, sepia tone"
+
+[[outputs]]
+id = "zMG5qLrqfI2rDrAcs4sE-"
+uri = "file://artifacts/lop9a2/public/images/memories_4.jpg"
+type = "image"
+title = "vintage school memories, old photo album, classmates, nostalgic, sepia tone"
+
+[[outputs]]
+id = "iwG0OXLFDSSYE4WrRw47G"
+uri = "file://artifacts/lop9a2/public/images/memories_5.jpg"
+type = "image"
+title = "vintage school memories, old photo album, classmates, nostalgic, sepia tone"
+
+[[outputs]]
+id = "K98YiDekQNcBrLmlycF_6"
+uri = "file://KyNiemLop9A2.tar.gz"
+type = "unspecified"
+title = "Kỷ Niệm Lớp 9A2 — Mã nguồn đầy đủ (có nhạc)"
