@@ -6,32 +6,12 @@ import path from "path";
 const basePath = process.env.BASE_PATH ?? "/";
 const port = Number(process.env.PORT ?? 3000);
 
-export default defineConfig(async () => ({
+export default defineConfig({
   base: basePath,
-  plugins: [
-    react(),
-    tailwindcss(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-runtime-error-modal").then((m) =>
-            m.default(),
-          ),
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer({
-              root: path.resolve(import.meta.dirname, ".."),
-            }),
-          ),
-          await import("@replit/vite-plugin-dev-banner").then((m) =>
-            m.devBanner(),
-          ),
-        ]
-      : []),
-  ],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "src"),
-      "@assets": path.resolve(import.meta.dirname, "public"),
     },
     dedupe: ["react", "react-dom"],
   },
@@ -54,4 +34,4 @@ export default defineConfig(async () => ({
     host: "0.0.0.0",
     allowedHosts: true,
   },
-}));
+});

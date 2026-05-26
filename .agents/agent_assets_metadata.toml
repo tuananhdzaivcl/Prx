@@ -5,7 +5,7 @@ generated = []
 id = "5vf3oay3-kTy_PGDbK9Pm"
 uri = "file://KyNiemLop9A2_Part1_SourceCode.zip"
 type = "unspecified"
-title = "Phần 1 — Source Code (Vercel-ready, 1.5 MB)"
+title = "Phần 1 — Source Code (Vercel-ready, đã fix build)"
 
 [[outputs]]
 id = "5KpMwDuHQRrjcpKECow_9"
