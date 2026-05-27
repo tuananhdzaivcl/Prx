@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/AuthContext";
 import { useLogout, getGetMeQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, Image as ImageIcon, Users, Home } from "lucide-react";
+import { LogOut, Image as ImageIcon, Home, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Navbar() {
@@ -50,12 +50,29 @@ export function Navbar() {
         <div className="hidden md:flex items-center gap-1">
           <NavLink href="/" icon={Home}>Trang chủ</NavLink>
           <NavLink href="/gallery" icon={ImageIcon}>Thư viện ảnh</NavLink>
-          {user?.isAdmin && <NavLink href="/admin" icon={Users}>Quản trị</NavLink>}
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Admin Panel button — always visible for admins on all screen sizes */}
+          {user?.isAdmin && (
+            <Link href="/admin">
+              <Button
+                variant={location === "/admin" ? "default" : "outline"}
+                size="sm"
+                className={`gap-2 font-semibold ${
+                  location === "/admin"
+                    ? "bg-amber-600 hover:bg-amber-700 text-white border-0"
+                    : "border-amber-500 text-amber-700 hover:bg-amber-50"
+                }`}
+              >
+                <ShieldAlert className="w-4 h-4" />
+                <span>Admin Panel</span>
+              </Button>
+            </Link>
+          )}
+
           {user ? (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground hidden sm:inline-block">
                 Chào, <span className="font-medium text-foreground">{user.username}</span>
               </span>
@@ -76,8 +93,6 @@ export function Navbar() {
           )}
         </div>
       </div>
-      
-      {/* Mobile nav bottom bar could go here, keeping simple for now with responsive hiding of names */}
     </nav>
   );
 }
