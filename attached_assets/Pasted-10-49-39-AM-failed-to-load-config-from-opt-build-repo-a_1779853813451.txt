@@ -1,0 +1,17 @@
+10:49:39 AM: failed to load config from /opt/build/repo/artifacts/mockup-sandbox/vite.config.ts
+10:49:39 AM: error during build:
+10:49:39 AM: Error: PORT environment variable is required but was not provided.
+10:49:39 AM:     at file:///opt/build/repo/artifacts/mockup-sandbox/node_modules/.vite-temp/vite.config.ts.timestamp-1779853779111-30f2c4c7e2c6c.mjs:145:9
+10:49:39 AM:     at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+10:49:39 AM:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+10:49:39 AM:     at async loadConfigFromBundledFile (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.3_@types+node@25.6.2_jiti@2.7.0_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:35936:12)
+10:49:39 AM:     at async bundleAndLoadConfigFile (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.3_@types+node@25.6.2_jiti@2.7.0_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:35824:17)
+10:49:39 AM:     at async loadConfigFromFile (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.3_@types+node@25.6.2_jiti@2.7.0_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:35791:42)
+10:49:39 AM:     at async resolveConfig (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.3_@types+node@25.6.2_jiti@2.7.0_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:35440:22)
+10:49:39 AM:     at async createBuilder (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.3_@types+node@25.6.2_jiti@2.7.0_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:33895:19)
+10:49:39 AM:     at async CAC.<anonymous> (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.3_@types+node@25.6.2_jiti@2.7.0_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.4/node_modules/vite/dist/node/cli.js:629:10)
+10:49:39 AM: /opt/build/repo/artifacts/mockup-sandbox:
+10:49:39 AM:  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/mockup-sandbox@2.0.0 build: `vite build`
+10:49:39 AM: Exit status 1
+10:49:39 AM: ​
+10:49:39 AM: "build.command" failed                          
