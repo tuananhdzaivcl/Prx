@@ -1,0 +1,108 @@
+10:52:09 AM: Waiting for other deploys from your team to complete. Check the queue: https://app.netlify.com/teams/acc550ktuananh/builds
+10:52:20 AM: build-image version: ac6eb13fbf000e5c09ad677efd8b7c3c2d0142b6 (noble-new-builds)
+10:52:20 AM: buildbot version: 397ebb8f8f4ca79bf05dcf5da3f37ebb58e6f89f
+10:52:20 AM: Fetching cached dependencies
+10:52:20 AM: Failed to fetch cache, continuing with build
+10:52:20 AM: Starting to prepare the repo for build
+10:52:20 AM: No cached dependencies found. Cloning fresh repo
+10:52:20 AM: git clone --filter=blob:none https://github.com/tuananhdzaivcl/Prx
+10:52:21 AM: Preparing Git Reference refs/heads/main
+10:52:24 AM: Installing dependencies
+10:52:24 AM: mise ~/.config/mise/config.toml tools: python@3.14.3
+10:52:24 AM: mise ~/.config/mise/config.toml tools: ruby@3.4.8
+10:52:24 AM: mise ~/.config/mise/config.toml tools: go@1.26.2
+10:52:24 AM: Downloading and installing node v22.22.3...
+10:52:25 AM: Downloading https://nodejs.org/dist/v22.22.3/node-v22.22.3-linux-x64.tar.xz...
+10:52:25 AM: Computing checksum with sha256sum
+10:52:25 AM: Checksums matched!
+10:52:28 AM: Now using node v22.22.3 (npm v10.9.8)
+10:52:28 AM: Enabling Node.js Corepack
+10:52:28 AM: pnpm workspaces detected
+10:52:29 AM: Installing npm packages using pnpm version 10.30.3
+10:52:29 AM: Scope: all 8 workspace projects
+10:52:29 AM: Lockfile is up to date, resolution step is skipped
+10:52:29 AM: Progress: resolved 1, reused 0, downloaded 0, added 0
+10:52:29 AM: Packages: +518
+10:52:29 AM: ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+10:52:30 AM: Progress: resolved 518, reused 0, downloaded 189, added 110
+10:52:31 AM: Progress: resolved 518, reused 0, downloaded 397, added 255
+10:52:32 AM: Progress: resolved 518, reused 0, downloaded 472, added 284
+10:52:33 AM: Progress: resolved 518, reused 0, downloaded 518, added 518, done
+10:52:33 AM: .../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+10:52:33 AM: .../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+10:52:33 AM: devDependencies:
+10:52:33 AM: + prettier 3.8.3
+10:52:33 AM: + typescript 5.9.3
+10:52:33 AM: . preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+10:52:33 AM: . preinstall: Done
+10:52:33 AM: Done in 4.6s using pnpm v10.30.3
+10:52:34 AM: npm packages installed using pnpm
+10:52:34 AM: Successfully installed dependencies
+10:52:34 AM: Detected 0 framework(s)
+10:52:35 AM: Starting build script
+10:52:35 AM: Section completed: initializing
+10:52:37 AM: ​
+10:52:37 AM: Netlify Build                                                 
+10:52:37 AM: ────────────────────────────────────────────────────────────────
+10:52:37 AM: ​
+10:52:37 AM: ❯ Version
+10:52:37 AM:   @netlify/build 35.13.8
+10:52:37 AM: ​
+10:52:37 AM: ❯ Flags
+10:52:37 AM:   accountId: 6a15d01443aa04210ce1cb99
+10:52:37 AM:   baseRelDir: true
+10:52:37 AM:   buildId: 6a166a693608cef1ebb7c584
+10:52:37 AM:   deployId: 6a166a693608cef1ebb7c586
+10:52:37 AM:   packagePath: artifacts/mockup-sandbox
+10:52:37 AM: ​
+10:52:37 AM: ❯ Current directory
+10:52:37 AM:   /opt/build/repo
+10:52:37 AM: ​
+10:52:37 AM: ❯ Config file
+10:52:37 AM:   No config file was defined: using default values.
+10:52:37 AM: ​
+10:52:37 AM: ❯ Context
+10:52:37 AM:   production
+10:52:37 AM: ​
+10:52:37 AM: Build command from Netlify app                                
+10:52:37 AM: ────────────────────────────────────────────────────────────────
+10:52:37 AM: ​
+10:52:37 AM: $ pnpm --filter @workspace/mockup-sandbox... run build
+10:52:38 AM: > @workspace/mockup-sandbox@2.0.0 build /opt/build/repo/artifacts/mockup-sandbox
+10:52:38 AM: > vite build
+10:52:38 AM: Failed during stage 'building site': Build script returned non-zero exit code: 2 (https://ntl.fyi/exit-code-2)
+10:52:38 AM: failed to load config from /opt/build/repo/artifacts/mockup-sandbox/vite.config.ts
+10:52:38 AM: error during build:
+10:52:38 AM: Error: PORT environment variable is required but was not provided.
+10:52:38 AM:     at file:///opt/build/repo/artifacts/mockup-sandbox/node_modules/.vite-temp/vite.config.ts.timestamp-1779853958306-a8d44fff9b4fb.mjs:145:9
+10:52:38 AM:     at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+10:52:38 AM:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+10:52:38 AM:     at async loadConfigFromBundledFile (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.3_@types+node@25.6.2_jiti@2.7.0_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:35936:12)
+10:52:38 AM:     at async bundleAndLoadConfigFile (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.3_@types+node@25.6.2_jiti@2.7.0_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:35824:17)
+10:52:38 AM:     at async loadConfigFromFile (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.3_@types+node@25.6.2_jiti@2.7.0_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:35791:42)
+10:52:38 AM:     at async resolveConfig (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.3_@types+node@25.6.2_jiti@2.7.0_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:35440:22)
+10:52:38 AM:     at async createBuilder (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.3_@types+node@25.6.2_jiti@2.7.0_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.4/node_modules/vite/dist/node/chunks/config.js:33895:19)
+10:52:38 AM:     at async CAC.<anonymous> (file:///opt/build/repo/node_modules/.pnpm/vite@7.3.3_@types+node@25.6.2_jiti@2.7.0_lightningcss@1.32.0_tsx@4.21.0_yaml@2.8.4/node_modules/vite/dist/node/cli.js:629:10)
+10:52:38 AM: /opt/build/repo/artifacts/mockup-sandbox:
+10:52:38 AM:  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/mockup-sandbox@2.0.0 build: `vite build`
+10:52:38 AM: Exit status 1
+10:52:38 AM: ​
+10:52:38 AM: "build.command" failed                                        
+10:52:38 AM: ────────────────────────────────────────────────────────────────
+10:52:38 AM: ​
+10:52:38 AM:   Error message
+10:52:38 AM:   Command failed with exit code 1: pnpm --filter @workspace/mockup-sandbox... run build (https://ntl.fyi/exit-code-1)
+10:52:38 AM: ​
+10:52:38 AM:   Error location
+10:52:38 AM:   In Build command from Netlify app:
+10:52:38 AM:   pnpm --filter @workspace/mockup-sandbox... run build
+10:52:38 AM: ​
+10:52:38 AM:   Resolved config
+10:52:38 AM:   build:
+10:52:38 AM:     command: pnpm --filter @workspace/mockup-sandbox... run build
+10:52:38 AM:     commandOrigin: ui
+10:52:38 AM:     publish: /opt/build/repo/artifacts/mockup-sandbox/dist
+10:52:38 AM:     publishOrigin: ui
+10:52:38 AM: Build failed due to a user error: Build script returned non-zero exit code: 2
+10:52:38 AM: Failing build: Failed to build site
+10:52:39 AM: Finished processing build request in 18.251s
