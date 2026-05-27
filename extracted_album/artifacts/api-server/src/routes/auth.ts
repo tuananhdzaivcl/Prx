@@ -115,4 +115,41 @@ router.get("/auth/me", requireAuth, async (req, res): Promise<void> => {
   });
 });
 
+// One-time setup: create initial admin account if none exists
+router.post("/setup", async (req, res): Promise<void> => {
+  const { username, password } = req.body as { username?: string; password?: string };
+
+  if (!username || !password || password.length < 6) {
+    res.status(400).json({ error: "Cần username và password (ít nhất 6 ký tự)" });
+    return;
+  }
+
+  // Only allow if no admin exists yet
+  const admins = await db
+    .select()
+    .from(membersTable)
+    .where(eq(membersTable.isAdmin, true));
+
+  if (admins.length > 0) {
+    res.status(403).json({ error: "Admin đã tồn tại. Endpoint này chỉ dùng một lần." });
+    return;
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  const [member] = await db
+    .insert(membersTable)
+    .values({ username, passwordHash, isAdmin: true, isBlocked: false })
+    .returning();
+
+  res.status(201).json({
+    message: "Tạo admin thành công!",
+    member: {
+      id: member.id,
+      username: member.username,
+      isAdmin: member.isAdmin,
+    },
+  });
+});
+
 export default router;
