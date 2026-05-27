@@ -5,7 +5,7 @@ generated = []
 id = "5vf3oay3-kTy_PGDbK9Pm"
 uri = "file://KyNiemLop9A2_Part1_SourceCode.zip"
 type = "unspecified"
-title = "Phần 1 — Source Code (fix Netlify PORT error)"
+title = "Phần 1 — Source Code (fix Netlify build path)"
 
 [[outputs]]
 id = "5KpMwDuHQRrjcpKECow_9"

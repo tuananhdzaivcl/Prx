@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm --filter './artifacts/lop9a2' run build"
+  command = "cd artifacts/lop9a2 && pnpm run build"
   publish = "artifacts/lop9a2/dist/public"
   functions = "netlify/functions"
 
