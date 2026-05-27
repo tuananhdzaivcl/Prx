@@ -1,21 +1,11 @@
 [build]
-  base = "extracted_album"
-  command = "cd artifacts/lop9a2 && pnpm run build"
+  command = "npm install -g pnpm && pnpm install && pnpm --filter @workspace/lop9a2 run build"
   publish = "artifacts/lop9a2/dist/public"
-  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20"
   PNPM_VERSION = "10"
-
-[functions]
-  node_bundler = "esbuild"
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
-  force = true
+  BASE_PATH = "/"
 
 [[redirects]]
   from = "/*"

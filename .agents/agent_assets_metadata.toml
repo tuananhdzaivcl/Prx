@@ -12,3 +12,9 @@ id = "5KpMwDuHQRrjcpKECow_9"
 uri = "file://KyNiemLop9A2_Part2_NhacMP3.zip"
 type = "unspecified"
 title = "Phần 2 — Nhạc nền MP3 (8.9 MB)"
+
+[[outputs]]
+id = "ESjmBNHJ_et_wxHDLyvPH"
+uri = "file://ky-niem-lop9a2-source.zip"
+type = "unspecified"
+title = "Kỷ Niệm Lớp 9A2 — Source Code (Netlify ready)"

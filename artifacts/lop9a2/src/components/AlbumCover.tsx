@@ -41,7 +41,7 @@ export function AlbumCover({ onOpen }: AlbumCoverProps) {
             </div>
 
             <div className="album-cover-title">
-              <div className="album-cover-year">2024 – 2025</div>
+              <div className="album-cover-year">2025 – 2026</div>
               <h1 className="album-cover-name">Kỷ Niệm<br />Lớp 9A2</h1>
               <div className="album-cover-subtitle">Thanh Xuân Còn Mãi</div>
               <div className={`album-cover-hint ${isOpening ? "opening-hint" : ""}`}>
