@@ -20,12 +20,34 @@ export default function Setup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
-      const data = await res.json() as { message?: string; error?: string; member?: { username: string } };
+
+      let data: Record<string, unknown> = {};
+      const text = await res.text();
+      try {
+        data = JSON.parse(text) as Record<string, unknown>;
+      } catch {
+        // server trả non-JSON (thường do thiếu env vars)
+        toast({
+          title: "Lỗi server",
+          description: "Server chưa được cấu hình. Kiểm tra DATABASE_URL và SESSION_SECRET trên Netlify.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (!res.ok) {
-        toast({ title: "Lỗi", description: data.error ?? "Có lỗi xảy ra", variant: "destructive" });
+        const msg =
+          (data.error as string) ??
+          (data.message as string) ??
+          (data.errorMessage as string) ??
+          `Lỗi ${res.status}`;
+        toast({ title: "Lỗi", description: msg, variant: "destructive" });
       } else {
         setDone(true);
-        toast({ title: "Thành công!", description: `Tài khoản admin "${data.member?.username}" đã được tạo.` });
+        toast({
+          title: "Thành công!",
+          description: `Tài khoản admin "${(data.member as { username: string } | undefined)?.username}" đã được tạo.`,
+        });
       }
     } catch {
       toast({ title: "Lỗi kết nối", description: "Không thể kết nối tới server.", variant: "destructive" });
