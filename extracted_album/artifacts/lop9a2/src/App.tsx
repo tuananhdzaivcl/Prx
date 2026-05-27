@@ -15,6 +15,7 @@ import Login from "@/pages/login";
 import Register from "@/pages/register";
 import Admin from "@/pages/admin";
 import Blocked from "@/pages/blocked";
+import Setup from "@/pages/setup";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const ALBUM_OPENED_KEY = "album_opened_v1";
 
 function AppRoutes() {
   const { user, isLoading } = useAuth();
+  const [location] = useLocation();
   const [albumOpened, setAlbumOpened] = useState(() => {
     return sessionStorage.getItem(ALBUM_OPENED_KEY) === "true";
   });
@@ -30,6 +32,11 @@ function AppRoutes() {
     sessionStorage.setItem(ALBUM_OPENED_KEY, "true");
     setAlbumOpened(true);
   };
+
+  // Setup page bypasses album cover and auth
+  if (location === "/setup") {
+    return <Setup />;
+  }
 
   if (!albumOpened) {
     return <AlbumCover onOpen={handleAlbumOpen} />;
