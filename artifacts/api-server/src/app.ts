@@ -17,33 +17,40 @@ const _require = createRequire(import.meta.url);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const PgStore = (_require("connect-pg-simple") as any)(session) as new (opts?: any) => session.Store;
 
+// On Replit the server is always behind HTTPS (even in "dev" mode).
+// REPLIT_DEV_DOMAIN is injected automatically by Replit.
+// This flag lets us set the right cookie attributes for cross-domain requests.
+const IS_HTTPS = process.env.NODE_ENV === "production" || !!process.env.REPLIT_DEV_DOMAIN;
+
 const app: Express = express();
+
+// Trust the Replit/Netlify reverse-proxy so secure cookies work.
+app.set("trust proxy", 1);
 
 app.use(
   pinoHttp({
     logger,
     serializers: {
       req(req: IncomingMessage & { id?: string | number }) {
-        return {
-          id: req.id,
-          method: req.method,
-          url: req.url?.split("?")[0],
-        };
+        return { id: req.id, method: req.method, url: req.url?.split("?")[0] };
       },
       res(res: ServerResponse) {
-        return {
-          statusCode: res.statusCode,
-        };
+        return { statusCode: res.statusCode };
       },
     },
   }),
 );
-app.use(cors({
-  origin: (origin, callback) => {
-    callback(null, origin || true);
-  },
-  credentials: true,
-}));
+
+// Reflect the exact requesting origin so credentials work cross-domain.
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      callback(null, origin || true);
+    },
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -59,9 +66,11 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      // SameSite=None + Secure=true required for cross-domain cookies (Netlify ↔ Replit).
+      // Must be set whenever the server is accessed over HTTPS.
+      secure: IS_HTTPS,
+      sameSite: IS_HTTPS ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
   }),
 );
