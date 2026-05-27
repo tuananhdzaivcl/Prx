@@ -1,0 +1,57 @@
+11:04:12 AM: build-image version: ac6eb13fbf000e5c09ad677efd8b7c3c2d0142b6 (noble-new-builds)
+11:04:12 AM: buildbot version: 397ebb8f8f4ca79bf05dcf5da3f37ebb58e6f89f
+11:04:12 AM: Building without cache
+11:04:12 AM: Starting to prepare the repo for build
+11:04:12 AM: No cached dependencies found. Cloning fresh repo
+11:04:12 AM: git clone --filter=blob:none https://github.com/tuananhdzaivcl/Prx
+11:04:13 AM: Preparing Git Reference refs/heads/main
+11:04:15 AM: Installing dependencies
+11:04:16 AM: mise ~/.config/mise/config.toml tools: python@3.14.3
+11:04:16 AM: mise ~/.config/mise/config.toml tools: ruby@3.4.8
+11:04:16 AM: mise ~/.config/mise/config.toml tools: go@1.26.2
+11:04:16 AM: Downloading and installing node v22.22.3...
+11:04:16 AM: Downloading https://nodejs.org/dist/v22.22.3/node-v22.22.3-linux-x64.tar.xz...
+11:04:16 AM: Computing checksum with sha256sum
+11:04:17 AM: Checksums matched!
+11:04:19 AM: Now using node v22.22.3 (npm v10.9.8)
+11:04:19 AM: Enabling Node.js Corepack
+11:04:20 AM: pnpm workspaces detected
+11:04:20 AM: Installing npm packages using pnpm version 10.30.3
+11:04:20 AM: Scope: all 8 workspace projects
+11:04:20 AM: Lockfile is up to date, resolution step is skipped
+11:04:20 AM: Progress: resolved 1, reused 0, downloaded 0, added 0
+11:04:20 AM: Packages: +518
+11:04:20 AM: ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+11:04:21 AM: Progress: resolved 518, reused 0, downloaded 223, added 141
+11:04:22 AM: Progress: resolved 518, reused 0, downloaded 302, added 177
+11:04:23 AM: Progress: resolved 518, reused 0, downloaded 471, added 283
+11:04:24 AM: Progress: resolved 518, reused 0, downloaded 518, added 518, done
+11:04:24 AM: .../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+11:04:24 AM: .../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+11:04:24 AM: devDependencies:
+11:04:24 AM: + prettier 3.8.3
+11:04:24 AM: + typescript 5.9.3
+11:04:24 AM: . preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+11:04:24 AM: . preinstall: Done
+11:04:25 AM: Done in 4.5s using pnpm v10.30.3
+11:04:25 AM: npm packages installed using pnpm
+11:04:25 AM: Successfully installed dependencies
+11:04:27 AM: Starting post processing
+11:04:27 AM: Skipping form detection
+11:04:27 AM: Post processing - header rules
+11:04:27 AM: Post processing - redirect rules
+11:04:27 AM: Post processing done
+11:04:27 AM: Section completed: postprocessing
+11:04:25 AM: Detected 0 framework(s)
+11:04:25 AM: No build steps found, continuing to publishing
+11:04:26 AM: Starting to deploy site from ''
+11:04:26 AM: Calculating files to upload
+11:04:28 AM: Site is live ✨
+11:04:27 AM: 0 new file(s) to upload
+11:04:27 AM: 0 new function(s) to upload
+11:04:27 AM: Section completed: deploying
+11:04:27 AM: Section completed: building
+11:04:28 AM: Uploading cache of size 137.1MB
+11:04:29 AM: Section completed: cleanup
+11:04:29 AM: Finished processing build request in 16.296s
+11:04:44 AM: [ERROR] Deploy logs are currently unavailable. We are working on resolving the issue.
